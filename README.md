@@ -74,7 +74,7 @@ $payload = $client->decryptPayload($encrypted, $decryptKey);
 使用方式：
 
 1. 执行 `composer install` 安装依赖；
-2. 打开 `tests/test.php`，将其中的 `appKey`、`privateKey` 替换为真实值；
+2. 打开 `tests/test.php`，将其中的 `appKey`、`privateKey`、`$decryptKey` 替换为真实值；
 3. 在项目根目录执行：
 
    ```bash

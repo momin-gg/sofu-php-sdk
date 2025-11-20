@@ -1,0 +1,22 @@
+{
+  "name": "yourname/sofu-yop-sdk",
+  "description": "Sofu payment YOP PHP SDK",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "sofu-zero"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Sofu\\Yop\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-openssl": "*"
+  }
+}

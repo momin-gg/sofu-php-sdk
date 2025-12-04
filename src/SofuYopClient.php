@@ -131,6 +131,9 @@ class SofuYopClient
      */
     protected function generateSign(array $params): string
     {
+        $params = array_filter($params, function ($value) {
+            return !is_null($value) && $value !== '';
+        });
         ksort($params);
         $dataString = http_build_query($params);
         return hash_hmac('sha256', $dataString, $this->privateKey);

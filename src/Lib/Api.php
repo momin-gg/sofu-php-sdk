@@ -16,7 +16,7 @@ trait Api
      * @param string $payWay      支付方式: NATIVE(扫码) | H5_PAY(H5) | MINI_PROGRAM(小程序)
      * @param string $channel     支付渠道: WECHAT | ALIPAY | UNIONPAY
      * @param string $notifyUrl   异步回调地址
-     * @param string $userIp      用户IP（H5支付必填）
+     * @param string $userIp      用户IP
      * @param string $returnUrl   支付完成跳转地址（可选）
      * @param string $openId      小程序用户openid（小程序支付必填）
      */
@@ -29,9 +29,9 @@ trait Api
             'payWay'      => $payWay,
             'channel'     => $channel,
             'notifyUrl'   => $notifyUrl,
+            'userIp'      => $userIp,
         ];
 
-        if ($userIp) $params['userIp'] = $userIp;
         if ($returnUrl) $params['returnUrl'] = $returnUrl;
         if ($openId) $params['openId'] = $openId;
 

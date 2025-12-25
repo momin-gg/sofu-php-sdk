@@ -35,15 +35,9 @@ $response = $sdk->unifiedOrder(
     'H5_PAY',                          // 支付方式: NATIVE | H5_PAY | MINI_PROGRAM
     'WECHAT',                          // 渠道: WECHAT | ALIPAY | UNIONPAY
     'https://your-domain.com/notify',  // 回调地址
-    '127.0.0.1',                       // 用户IP（H5必填）
+    '127.0.0.1',                       // 用户IP
     'https://your-domain.com/return'   // 跳转地址（可选）
 );
-
-// 扫码支付
-$response = $sdk->unifiedOrder($orderId, $amount, $goodsName, 'NATIVE', 'WECHAT', $notifyUrl);
-
-// 小程序支付
-$response = $sdk->unifiedOrder($orderId, $amount, $goodsName, 'MINI_PROGRAM', 'WECHAT', $notifyUrl, null, null, $openId);
 
 // 订单查询
 $response = $sdk->queryOrder('ORDER20231119001');

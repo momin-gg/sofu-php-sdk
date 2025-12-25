@@ -112,8 +112,9 @@ if ($response['code'] === 6000) {
 ```
 .env.example          # 配置模板
 src/
-├── SofuPay.php       # SDK 入口（包含所有API方法）
+├── SofuPay.php       # SDK 入口（use Api）
 └── Lib/
+    ├── Api.php         # API 方法 Trait
     ├── HttpClient.php  # HTTP 请求
     └── Utils.php       # 工具类
 ```

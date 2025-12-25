@@ -1,6 +1,6 @@
 {
   "name": "moming/sofu-yop-sdk",
-  "description": "Sofu payment YOP PHP SDK",
+  "description": "嗖付聚合支付 PHP SDK",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -10,7 +10,8 @@
   ],
   "autoload": {
     "psr-4": {
-      "Sofu\\Yop\\": "src/"
+      "Sofu\\Pay\\": "src/",
+      "Sofu\\Pay\\Lib\\": "src/Lib/"
     }
   },
   "require": {

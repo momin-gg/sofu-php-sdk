@@ -1,89 +1,124 @@
-# Sofu YOP PHP SDK
+# Sofu PHP SDK
 
-一个用于对接嗖付 YOP 支付网关的轻量级 PHP SDK，封装了参数管理、签名生成、HTTP 请求发送以及回调报文解密等常用能力。
+嗖付聚合支付 PHP SDK API 调用。
 
 ## 安装
 
-项目已支持通过 Composer 自动加载：
-
 ```bash
-composer require yourname/sofu-yop-sdk
+composer require sofu/php-sdk
 ```
 
-运行环境要求：
-
-- PHP >= 7.2
-- 已启用扩展：`ext-curl`、`ext-json`、`ext-openssl`
+**要求：** PHP >= 7.2
 
 ## 快速开始
 
-```php
-use Sofu\Yop\SofuYopClient;
+**1. 复制配置文件**
 
-$appKey     = 'your-app-key';
-$privateKey = 'your-private-key';
-
-// 可选：根据环境替换为正式网关地址
-$client = new SofuYopClient($appKey, $privateKey, 'https://developer.sofubao.com');
-
-// 设置业务参数（示例为创建支付订单）
-$client->addParam('order_no', 'SF' . time());
-$client->addParam('amount', 100);
-$client->addParam('notify_url', 'https://yourdomain.com/notify');
-
-// 发起请求
-$result = $client->post('/api/pay/create');
-
-// 根据返回结果进行业务处理
-var_dump($result);
+```bash
+cp .env.example .env
 ```
 
-## 回调解密示例
+**2. 编辑 `.env` 填写配置**
 
-嗖付回调报文中通常会包含 `encrypted_data` 字段，用于承载加密后的业务数据。可以使用 `SofuYopClient::decryptPayload` 进行解密：
+```env
+SOFU_MERCHANT_NO=你的商户号
+SOFU_APP_KEY=你的AppKey
+SOFU_PRIVATE_KEY=你的私钥
+SOFU_DECRYPT_KEY=回调解密密钥
+SOFU_ENDPOINT=https://developer.sofubao.com
+```
+
+**3. 调用 SDK**
 
 ```php
-use Sofu\Yop\SofuYopClient;
+use Sofu\Pay\SofuPay;
 
-// 回调时从 php://input 读取原始报文
+$sdk = SofuPay::fromEnv(__DIR__ . '/.env');
+$response = $sdk->queryBalance();
+```
+
+## API 方法列表
+
+### 1. 聚合支付统一下单
+
+```php
+$response = $sdk->unifiedOrder(
+    'ORDER' . time(),           // 订单号
+    100.00,                     // 金额
+    '测试商品',                  // 商品名
+    'H5_PAY',                   // 支付方式：NATIVE|H5_PAY|MINI_PROGRAM
+    'WECHAT',                   // 渠道：WECHAT|ALIPAY|UNIONPAY
+    'https://your-domain.com/notify',  // 回调地址
+    ['userIp' => '127.0.0.1', 'returnUrl' => 'https://your-domain.com/return']  // 可选参数
+);
+```
+
+### 2. 订单查询
+
+```php
+$response = $sdk->queryOrder('ORDER20231119001');
+```
+
+### 3. 申请退款
+
+```php
+$response = $sdk->refund('ORDER20231119001', 50.00, '用户申请退款');
+```
+
+### 4. 退款查询
+
+```php
+$response = $sdk->queryRefund();
+```
+
+### 5. 账户余额查询
+
+```php
+$response = $sdk->queryBalance();
+```
+
+### 6. 待结算查询
+
+```php
+$response = $sdk->queryPendingSettlement();
+```
+
+## 回调解密
+
+```php
+$sdk->setDecryptKey('your-callback-decrypt-key');
+
 $raw  = file_get_contents('php://input');
 $data = json_decode($raw, true);
 
-if (!isset($data['encrypted_data'])) {
-    // 根据业务需要记录日志或返回错误
-    return;
-}
-
-$encrypted  = $data['encrypted_data'];
-$decryptKey = 'your-callback-decrypt-key';
-
-$client = new SofuYopClient($appKey, $privateKey);
-
-$payload = $client->decryptPayload($encrypted, $decryptKey);
-
-// $payload 即为解密后的数组，根据其中字段更新订单状态等
+$payload = $sdk->decryptCallback($data['encrypted_data']);
 ```
 
-## 本地联调与示例脚本
+## 响应处理
 
-项目内提供了一个简单的本地联调示例脚本：`tests/test.php`，主要用于：
+所有接口返回数组格式，`code === 6000` 表示成功：
 
-- 演示如何构造支付请求并调用支付接口；
-- 演示如何模拟回调并使用 `decryptPayload` 解密 `encrypted_data`。
+```php
+if ($response['code'] === 6000) {
+    $result = $response['result'];
+    // 处理业务逻辑
+} else {
+    echo "错误：" . $response['message'];
+}
+```
 
-使用方式：
+## 文件结构
 
-1. 执行 `composer install` 安装依赖；
-2. 打开 `tests/test.php`，将其中的 `appKey`、`privateKey`、`$decryptKey` 替换为真实值；
-3. 在项目根目录执行：
+```
+.env.example          # 配置模板
+src/
+├── SofuPay.php       # SDK 入口（唯一暴露）
+└── Lib/
+    ├── Api.php         # API 接口
+    ├── HttpClient.php  # HTTP 请求
+    └── Utils.php       # 工具类
+```
 
-   ```bash
-   php tests/test.php
-   ```
+## 示例脚本
 
-   根据需要在脚本中调用 `pay($client)` 或 `callback($client, $decryptKey)` 进行调试。
-
-## 测试与扩展
-
-- 当前示例脚本适合作为联调/调试使用；
-- 如需更完善的自动化回归测试，可以在此基础上引入 PHPUnit，为签名生成、回调解密等核心逻辑编写单元测试。
+查看 `tests/test.php` 获取完整使用示例。

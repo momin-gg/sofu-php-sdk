@@ -1,7 +1,9 @@
 <?php
-
-// 嗖付 SDK 测试
-// 使用前请先复制 .env.example 为 .env 并填写真实配置
+/**
+ * Sofu PHP SDK 测试
+ * 
+ * 使用前请复制 .env.example 为 .env 并填写配置
+ */
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -9,15 +11,13 @@ use Sofu\Pay\SofuPay;
 
 $sdk = new SofuPay();
 
-// 统一下单测试
 $response = $sdk->unifiedOrder(
-    'ORDER' . time(),
+    'SF' . date('YmdHis'),
     0.01,
     '测试商品',
     'H5_PAY',
     'WECHAT',
-    'https://your-domain.com/notify',
-    ['userIp' => '127.0.0.1']
+    'https://example.com/notify'
 );
 
-print_r($response);
+echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

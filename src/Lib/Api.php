@@ -20,7 +20,7 @@ trait Api
      * @param string $returnUrl   支付完成跳转地址（可选）
      * @param string $openId      小程序用户openid（小程序支付必填）
      */
-    public function unifiedOrder($orderId, $orderAmount, $goodsName, $payWay, $channel, $notifyUrl, $userIp = null, $returnUrl = null, $openId = null)
+    public function unifiedOrder($orderId, $orderAmount, $goodsName, $payWay, $channel, $notifyUrl, $userIp = null,$expiredTime = null, $returnUrl = null, $openId = null)
     {
         $params = [
             'orderId'     => $orderId,
@@ -30,6 +30,7 @@ trait Api
             'channel'     => $channel,
             'notifyUrl'   => $notifyUrl,
             'userIp'      => $userIp,
+            'expiredTime' => $expiredTime,
         ];
 
         if ($returnUrl) $params['returnUrl'] = $returnUrl;

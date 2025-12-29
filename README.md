@@ -36,6 +36,7 @@ $response = $sdk->unifiedOrder(
     'WECHAT',                          // 渠道: WECHAT | ALIPAY | UNIONPAY
     'https://your-domain.com/notify',  // 回调地址
     '127.0.0.1',                       // 用户IP
+    '2024-12-29'                        //订单截止时间
     'https://your-domain.com/return'   // 跳转地址（可选）
 );
 
